@@ -13,35 +13,35 @@ static mut USED_ADDRESS: Vec<String> = vec![];
 #[tokio::main]
 async fn main() -> Result<(), reqwest::Error> {
     let args: Vec<String> = env::args().collect();
-    let csv_file = args[1].to_string();
-    let args_string = args[2..].join(" ").to_string();
-    if !args_string.contains('i') {
+    let csv_file_input = args[1].to_string();
+    let args_string = args[2..args.len() - 2].join(" ").to_string();
+    let invalid_csv_file = args.last().unwrap().to_string();
+    if !args.join(" ").to_string().contains(" i ") {
         println!("Please provide parameter i following with file_name");
         println!("~command~ i invalid_address.csv");
         process::exit(0);
     }
-    for (count, args_to_proccess) in args_string.split('w').enumerate() {
+    if &args.last().unwrap()[&args.last().unwrap().trim().len() - 4..] != ".csv" {
+        println!("Please provide output for invalid with .csv file");
+        process::exit(0)
+    }
+
+    for (count, args_to_proccess) in args_string.split(" w ").enumerate() {
         let args_to_proccess_vec: Vec<String> = args_to_proccess
             .split_whitespace() // Use split_whitespace to split at whitespace
             .map(String::from) // Convert each substring to String
             .collect();
         println!("\nProcessing command {}\n", count + 1);
-        init(&csv_file, args_to_proccess_vec).await?;
+        init(&csv_file_input, args_to_proccess_vec).await?;
     }
     let used = unsafe { mem::take(&mut USED_ADDRESS) };
     let non_valid_addresses = set_difference(
-        get_addresses_from_csv(csv_file.to_string()).expect("Error creating list of addresses"),
+        get_addresses_from_csv(csv_file_input.to_string())
+            .expect("Error creating list of addresses"),
         &used,
     );
 
-    let mut file = create_csv_file(
-        if &args.last().unwrap()[&args.last().unwrap().trim().len() - 4..] == ".csv" {
-            args.last().unwrap()
-        } else {
-            println!("Please provide output for invalid with .csv file");
-            process::exit(0);
-        },
-    );
+    let mut file = create_csv_file(&invalid_csv_file);
     for address in non_valid_addresses.iter() {
         file.write_all(format!("{},\n", address).as_bytes())
             .unwrap();
@@ -49,9 +49,9 @@ async fn main() -> Result<(), reqwest::Error> {
     Ok(())
 }
 
-async fn init(csv_file: &str, args: Vec<String>) -> Result<(), reqwest::Error> {
+async fn init(csv_file_input: &str, args: Vec<String>) -> Result<(), reqwest::Error> {
     let (min, max, command_filter, (is_staking, address)) = parse_command(&args);
-    let addresses = valid_addresses(csv_file);
+    let addresses = valid_addresses(csv_file_input);
     let body = json!({
         "addresses": addresses,
         "aggregation_level": "Vault",
