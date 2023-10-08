@@ -24,6 +24,7 @@ pub struct Vaults {
 pub struct ResourceData {
     pub vaults: Vaults,
     pub explicit_metadata: ResourceMetadata,
+    pub resource_address: String,
 }
 impl ResourceData {
     pub fn get_token_metadata(&self) -> &Values {
@@ -37,7 +38,10 @@ impl ResourceData {
     pub fn is_lsu(&self) -> bool {
         self.get_token_metadata().raw_hex == "5c2200010c124c6971756964205374616b6520556e697473"
     }
-    pub fn get_staked_amount(&self) -> &str {
+    pub fn get_resource_address(&self) -> String {
+        self.resource_address.to_string()
+    }
+    pub fn get_amount(&self) -> &str {
         self.vaults
             .items
             .first()
