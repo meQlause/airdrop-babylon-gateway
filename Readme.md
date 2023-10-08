@@ -9,8 +9,8 @@ airdrop address filter with babylon gateway (radixdlt). You can download [here](
 cargo run input-csv-file -command- -command_filter- min max{optional} output-csv-file i file-for-invalid-addresses.
 eg :
 
-- cargo run add.csv resource_rdx1tknxxxxxxxxxradxrdxxxxxxxxx009923554798xxxxxxxxxradxrd min 1000 tier1.csv
-- cargo run add.csv staking between 90 100 tier2.csv
+- cargo run add.csv resource_rdx1tknxxxxxxxxxradxrdxxxxxxxxx009923554798xxxxxxxxxradxrd min 1000 tier1.csv i invalid.csv
+- cargo run add.csv staking between 90 100 tier2.csv i invalid.csv
 
 ### Multiple Commands
 
